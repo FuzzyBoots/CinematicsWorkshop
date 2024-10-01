@@ -1,13 +1,5 @@
 fileFormatVersion: 2
 guid: 814c25c1fd12d254baf544df6a99c9ef
-ScriptedImporter:
-  internalIDToNameTable: []
-  externalObjects: {}
-  serializedVersion: 2
-  userData: 
-  assetBundleName: 
-  assetBundleVariant: 
-  script: {fileID: 11500000, guid: 625f186215c104763be7675aa2d941aa, type: 3}
 AssetOrigin:
   serializedVersion: 1
   productId: 281338
@@ -16,3 +8,11 @@ AssetOrigin:
   assetPath: Assets/Unity Asset Store/SLRenderStudio/Low Poly Stylized Nature/Shaders/Flower
     shader.shadergraph
   uploadId: 681097
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {instanceID: 0}

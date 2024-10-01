@@ -1,13 +1,5 @@
 fileFormatVersion: 2
 guid: d1f0197ddabb300418ec9d571835cb89
-ScriptedImporter:
-  internalIDToNameTable: []
-  externalObjects: {}
-  serializedVersion: 2
-  userData: 
-  assetBundleName: 
-  assetBundleVariant: 
-  script: {fileID: 11500000, guid: 60072b568d64c40a485e0fc55012dc9f, type: 3}
 AssetOrigin:
   serializedVersion: 1
   productId: 281338
@@ -16,3 +8,11 @@ AssetOrigin:
   assetPath: Assets/Unity Asset Store/SLRenderStudio/Low Poly Stylized Nature/Shaders/SubGraphs/skybox
     uv.shadersubgraph
   uploadId: 681097
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {instanceID: 0}
