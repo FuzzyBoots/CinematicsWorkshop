@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 26dcfa9d407e4e94ea77aec7649b85a3
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 229591
+  packageName: AnimTool
+  packageVersion: 1.0.3
+  assetPath: Assets/RenownedGames/AnimTool/Core/Editor/AnimTool.asmdef
+  uploadId: 548422
