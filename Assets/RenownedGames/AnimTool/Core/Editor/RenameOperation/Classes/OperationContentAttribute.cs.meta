@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 22bd163450b9d174187a7c66038629c2
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 229591
+  packageName: AnimTool
+  packageVersion: 1.0.3
+  assetPath: Assets/RenownedGames/AnimTool/Core/Editor/RenameOperation/Classes/OperationContentAttribute.cs
+  uploadId: 548422

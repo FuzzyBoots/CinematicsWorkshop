@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 2a0de6fbd0244a94dabaded35f219884
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 229591
+  packageName: AnimTool
+  packageVersion: 1.0.3
+  assetPath: Assets/RenownedGames/AnimTool/Core/Editor/AssemblyInfo.cs
+  uploadId: 548422

@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: efc8f56aca5f62e4a86eed183732cedd
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 229591
+  packageName: AnimTool
+  packageVersion: 1.0.3
+  assetPath: Assets/RenownedGames/AnimTool/Core/Editor/EditorWindows/AnimToolWindow/Classes/AnimToolWindow.cs
+  uploadId: 548422

@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 82b396665a9b4584895a01d676ee890c
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 229591
+  packageName: AnimTool
+  packageVersion: 1.0.3
+  assetPath: Assets/RenownedGames/AnimTool/Core/Editor/EditorWindows/AnimToolWindow/Classes/GUISplitView.cs
+  uploadId: 548422

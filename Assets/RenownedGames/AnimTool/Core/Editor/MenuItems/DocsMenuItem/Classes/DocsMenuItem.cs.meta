@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 169706d6659f908488ef968dd8f0b073
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 229591
+  packageName: AnimTool
+  packageVersion: 1.0.3
+  assetPath: Assets/RenownedGames/AnimTool/Core/Editor/MenuItems/DocsMenuItem/Classes/DocsMenuItem.cs
+  uploadId: 548422
