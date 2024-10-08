@@ -11,7 +11,7 @@ namespace AssetInventory
     public static class UpgradeUtil
     {
         public const int CURRENT_CONFIG_VERSION = 2;
-        private const int CURRENT_DB_VERSION = 17;
+        private const int CURRENT_DB_VERSION = 18;
 
         public static bool LongUpgradeRequired { get; private set; }
         private static List<string> PendingUpgrades { get; set; } = new List<string>();
@@ -161,6 +161,10 @@ namespace AssetInventory
 
                 DBAdapter.DB.Execute("DROP INDEX IF EXISTS AssetFile_FileName");
                 DBAdapter.DB.Execute("CREATE INDEX \"AssetFile_FileName\" ON \"AssetFile\" (\"FileName\" COLLATE NOCASE)");
+            }
+            if (oldVersion < 18)
+            {
+                DBAdapter.DB.Execute("UPDATE AssetFile set SourcePath = Path where SourcePath like '%/Extracted/%'");
             }
             if (dbVersion == null || (oldVersion < CURRENT_DB_VERSION && !LongUpgradeRequired))
             {

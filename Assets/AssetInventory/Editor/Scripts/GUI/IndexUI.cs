@@ -124,6 +124,7 @@ namespace AssetInventory
         private List<AssetInfo> _assets;
         private int _indexedPackageCount;
         private int _indexablePackageCount;
+        private int _aiPackageCount;
 
         private static int _scriptsReloaded;
         private bool _requireAssetTreeRebuild;
@@ -342,7 +343,7 @@ namespace AssetInventory
             _resultSizes = new[] {"-all-", string.Empty, "10", "25", "50", "100", "250", "500", "1000", "1500", "2000", "2500", "3000", "4000", "5000"};
             _searchFields = new[] {"Asset Path", "File Name", "AI Caption"};
             _sortFields = new[] {"Asset Path", "File Name", "Size", "Type", "Length", "Width", "Height", "Color", "Category", "Last Updated", "Rating", "#Reviews", string.Empty, "-unsorted-"};
-            _packageSortOptions = new[] {"Name", "Purchase Date", "Last Update", "Size", "Location", "Hot", "Rating", "#Reviews"};
+            _packageSortOptions = Enum.GetNames(typeof (AssetTreeViewControl.Columns)).Select(StringUtils.CamelCaseToWords).ToArray();
             _groupByOptions = new[] {"-none-", string.Empty, "Category", "Publisher", "Tag", "State", "Location"};
             _colorOptions = new[] {"-all-", "matching"};
             _tileTitle = new[] {"-Intelligent-", string.Empty, "Asset Path", "File Name", "File Name without Extension", string.Empty, "None"};

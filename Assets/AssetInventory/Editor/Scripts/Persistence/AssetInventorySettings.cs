@@ -53,6 +53,7 @@ namespace AssetInventory
         public int tagListHeight = 250;
         public bool enlargeTiles = true;
         public bool centerTiles;
+        public int[] visiblePackageTreeColumns;
 
         public bool showSearchFilterBar;
         public bool showSearchDetailsBar = true;
@@ -109,8 +110,8 @@ namespace AssetInventory
         public bool aiForModels;
         public bool aiForImages;
         public int blipType; // 0 - small, 1 = large
-        public int gpuUsage; // 0 - none, 2 = 0, 3 = 1, 4 = 2
         public int blipChunkSize = 1;
+        public bool aiUseGPU;
         public int aiPause = 1;
 
         public bool upscalePreviews = true;

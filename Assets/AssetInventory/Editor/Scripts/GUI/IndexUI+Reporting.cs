@@ -7,6 +7,7 @@ using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEditor.PackageManager;
 using UnityEngine;
+using static AssetInventory.AssetTreeViewControl;
 using PackageInfo = UnityEditor.PackageManager.PackageInfo;
 
 namespace AssetInventory
@@ -37,7 +38,8 @@ namespace AssetInventory
             {
                 if (_reportTreeViewState == null) _reportTreeViewState = new TreeViewState();
 
-                MultiColumnHeaderState headerState = ReportTreeViewControl.CreateDefaultMultiColumnHeaderState(ReportTreeRect.width);
+                MultiColumnHeaderState headerState = CreateDefaultMultiColumnHeaderState(ReportTreeRect.width);
+                headerState.visibleColumns = new[] {(int)Columns.Name, (int)Columns.License, (int)Columns.Version};
                 if (MultiColumnHeaderState.CanOverwriteSerializedFields(reportMchState, headerState)) MultiColumnHeaderState.OverwriteSerializedFields(reportMchState, headerState);
                 reportMchState = headerState;
 
@@ -48,7 +50,7 @@ namespace AssetInventory
                     mch.height = MultiColumnHeader.DefaultGUI.minimumHeight;
                     mch.ResizeToFit();
 
-                    _reportTreeView = new ReportTreeViewControl(_reportTreeViewState, mch, ReportTreeModel);
+                    _reportTreeView = new AssetTreeViewControl(_reportTreeViewState, mch, ReportTreeModel);
                     _reportTreeView.OnSelectionChanged += OnReportTreeSelectionChanged;
                     _reportTreeView.OnDoubleClickedItem += OnReportTreeDoubleClicked;
                     _reportTreeView.Reload();

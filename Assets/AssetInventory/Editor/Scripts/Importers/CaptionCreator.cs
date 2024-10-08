@@ -88,7 +88,7 @@ namespace AssetInventory
         public static List<BlipResult> CaptionImage(List<string> filenames)
         {
             string blipType = AssetInventory.Config.blipType == 1 ? "--large" : "";
-            string gpuUsage = AssetInventory.Config.gpuUsage >= 2 ? $"--gpu {AssetInventory.Config.gpuUsage - 2}" : "";
+            string gpuUsage = AssetInventory.Config.aiUseGPU ? "--gpu" : "";
             string nameList = "\"" + string.Join("\" \"", filenames) + "\"";
             string result = IOUtils.ExecuteCommand("blip-caption", $"{blipType} {gpuUsage} --json {nameList}");
             if (string.IsNullOrWhiteSpace(result)) return null;

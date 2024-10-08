@@ -653,6 +653,11 @@ namespace AssetInventory
                     }
 
                     GUILayout.BeginHorizontal();
+                    EditorGUILayout.LabelField(UIStyles.Content("Activated Packages"), EditorStyles.boldLabel, GUILayout.Width(labelWidth));
+                    EditorGUILayout.LabelField(UIStyles.Content($"{_aiPackageCount} (set per package in Packages view)"));
+                    GUILayout.EndHorizontal();
+
+                    GUILayout.BeginHorizontal();
                     EditorGUILayout.LabelField(UIStyles.Content("Used Model", "The model to be used for captioning. Local models are free of charge, but require a potent computer and graphics card."), EditorStyles.boldLabel, GUILayout.Width(labelWidth));
                     GUILayout.BeginVertical();
                     if (GUILayout.Button("Salesforce Blip through Blip-Caption tool (local, free)", UIStyles.wrappedLinkLabel, GUILayout.ExpandWidth(true)))
@@ -671,8 +676,8 @@ namespace AssetInventory
                     if (ShowAdvanced())
                     {
                         GUILayout.BeginHorizontal();
-                        EditorGUILayout.LabelField(UIStyles.Content("GPU Usage", "Specify if and which GPU should be used. Otherwise only the CPU will be used. GPU support requires a patched blip version supporting GPU usage, see pull requests."), EditorStyles.boldLabel, GUILayout.Width(labelWidth));
-                        AssetInventory.Config.gpuUsage = EditorGUILayout.Popup(AssetInventory.Config.gpuUsage, _gpuOptions, GUILayout.Width(100));
+                        EditorGUILayout.LabelField(UIStyles.Content("GPU Usage", "Activate GPU acceleration if your system supports it. Otherwise only the CPU will be used. GPU support requires a patched blip version supporting GPU usage, see pull request 8."), EditorStyles.boldLabel, GUILayout.Width(labelWidth));
+                        AssetInventory.Config.aiUseGPU = EditorGUILayout.Toggle(AssetInventory.Config.aiUseGPU, GUILayout.MaxWidth(cbWidth));
                         GUILayout.EndHorizontal();
                     }
 
@@ -1338,6 +1343,7 @@ namespace AssetInventory
             _packageCount = _assets.Count;
             _indexedPackageCount = _assets.Count(a => a.FileCount > 0);
             _subPackageCount = _assets.Count(a => a.ParentId > 0);
+            _aiPackageCount = _assets.Count(a => a.UseAI);
             _deprecatedAssetsCount = _assets.Count(a => a.IsDeprecated);
             _abandonedAssetsCount = _assets.Count(a => a.IsAbandoned);
             _excludedAssetsCount = _assets.Count(a => a.Exclude);

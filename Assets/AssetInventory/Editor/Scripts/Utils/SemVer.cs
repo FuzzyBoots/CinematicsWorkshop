@@ -32,6 +32,7 @@ namespace AssetInventory
             _originalVersion = version;
             if (!string.IsNullOrEmpty(version))
             {
+                version = version.Replace(",", ".");
                 string[] components = version.Split('.');
                 ComponentCount = components.Length;
 

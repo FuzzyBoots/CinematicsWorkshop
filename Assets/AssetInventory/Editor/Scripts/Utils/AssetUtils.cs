@@ -69,18 +69,6 @@ namespace AssetInventory
             PreviewCache.Clear();
         }
 
-        public static string RemoveTrailing(this string source, string text)
-        {
-            if (source == null)
-            {
-                Debug.LogError("This should not happen, source path is null");
-                return null;
-            }
-
-            while (source.EndsWith(text)) source = source.Substring(0, source.Length - text.Length);
-            return source;
-        }
-
         public static int RemoveMissingScripts(this Transform obj)
         {
             int result = GameObjectUtility.RemoveMonoBehavioursWithMissingScript(obj.gameObject);
@@ -531,11 +519,6 @@ namespace AssetInventory
             }
 
             return guid.Substring(6);
-        }
-
-        public static bool IsUrl(string url)
-        {
-            return Uri.IsWellFormedUriString(url, UriKind.Absolute);
         }
 
         public static bool IsOnURP()

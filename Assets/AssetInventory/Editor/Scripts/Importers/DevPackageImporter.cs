@@ -99,7 +99,7 @@ namespace AssetInventory
             FolderSpec importSpec = GetDefaultImportSpec();
             importSpec.location = asset.GetLocation(true);
             importSpec.createPreviews = spec.createPreviews;
-            await new MediaImporter().Index(importSpec, asset, true, true);
+            await new MediaImporter().Index(importSpec, asset, false, true);
 
             MarkDone(asset);
         }

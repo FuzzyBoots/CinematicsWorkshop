@@ -146,10 +146,15 @@ namespace AssetInventory
                 CurrentSub = file;
                 SubProgress = i + 1;
 
+                string relPath = file.Substring(specLength);
+
                 AssetFile af = new AssetFile();
                 af.AssetId = attachedAsset.Id;
-                af.SetSourcePath(AssetInventory.MakeRelative(file));
-                af.SetPath(storeRelativePath ? file.Substring(specLength) : af.SourcePath);
+
+                // ensure no absolute paths are stored, e.g. in archives, would point to extracted otherwise
+                // locations outside extracted, e.g. directories, reg packages... should be stored as is
+                af.SetSourcePath(storeRelativePath ? relPath : AssetInventory.MakeRelative(file));
+                af.SetPath(actAsSubImporter ? relPath : af.SourcePath);
 
                 string metaFile = $"{file}.meta";
                 if (File.Exists(metaFile)) af.Guid = AssetUtils.ExtractGuidFromFile(metaFile);

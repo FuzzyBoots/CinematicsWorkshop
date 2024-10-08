@@ -480,7 +480,7 @@ namespace AssetInventory
         {
             string changeLog = GetChangeLog(versionOverride);
 
-            return AssetUtils.IsUrl(changeLog) ? changeLog : null;
+            return StringUtils.IsUrl(changeLog) ? changeLog : null;
         }
 
         public string GetLocation(bool expanded)

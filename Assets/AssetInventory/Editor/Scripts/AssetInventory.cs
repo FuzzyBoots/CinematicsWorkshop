@@ -2290,7 +2290,7 @@ namespace AssetInventory
             DBAdapter.DB.Update(asset);
         }
 
-        public static void SetAssetAIUse(AssetInfo info, bool useAI)
+        public static void SetAssetAIUse(AssetInfo info, bool useAI, bool invokeUpdate = true)
         {
             Asset asset = DBAdapter.DB.Find<Asset>(info.AssetId);
             if (asset == null) return;
@@ -2299,6 +2299,8 @@ namespace AssetInventory
             info.UseAI = useAI;
 
             DBAdapter.DB.Update(asset);
+
+            if (invokeUpdate) OnPackagesUpdated?.Invoke();
         }
 
         public static bool ShowAdvanced()

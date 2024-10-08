@@ -10,6 +10,8 @@ using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEditor.PackageManager;
 using UnityEngine;
+using static AssetInventory.AssetTreeViewControl;
+using Debug = UnityEngine.Debug;
 using PackageInfo = UnityEditor.PackageManager.PackageInfo;
 
 namespace AssetInventory
@@ -62,15 +64,25 @@ namespace AssetInventory
             {
                 if (_assetTreeViewState == null) _assetTreeViewState = new TreeViewState();
 
-                MultiColumnHeaderState headerState = AssetTreeViewControl.CreateDefaultMultiColumnHeaderState(AssetTreeRect.width);
+                MultiColumnHeaderState headerState = CreateDefaultMultiColumnHeaderState(AssetTreeRect.width);
+                if (AssetInventory.Config.visiblePackageTreeColumns != null && AssetInventory.Config.visiblePackageTreeColumns.Length > 0)
+                {
+                    headerState.visibleColumns = AssetInventory.Config.visiblePackageTreeColumns;
+                }
+                else
+                {
+                    headerState.visibleColumns = new[] {(int)Columns.Name, (int)Columns.Tags, (int)Columns.Version, (int)Columns.Indexed};
+                }
                 if (MultiColumnHeaderState.CanOverwriteSerializedFields(assetMchState, headerState)) MultiColumnHeaderState.OverwriteSerializedFields(assetMchState, headerState);
                 assetMchState = headerState;
 
                 if (_assetTreeView == null)
                 {
                     MultiColumnHeader mch = new MultiColumnHeader(headerState);
-                    mch.canSort = false;
+                    mch.canSort = true;
                     mch.height = MultiColumnHeader.DefaultGUI.minimumHeight;
+                    mch.visibleColumnsChanged += OnVisibleAssetTreeColumnsChanged;
+                    mch.sortingChanged += OnAssetTreeSortingChanged;
                     mch.ResizeToFit();
 
                     _assetTreeView = new AssetTreeViewControl(_assetTreeViewState, mch, AssetTreeModel);
@@ -80,6 +92,22 @@ namespace AssetInventory
                 }
                 return _assetTreeView;
             }
+        }
+
+        private void OnAssetTreeSortingChanged(MultiColumnHeader mch)
+        {
+            AssetInventory.Config.assetSorting = mch.sortedColumnIndex;
+            AssetInventory.Config.sortAssetsDescending = !mch.IsSortedAscending(mch.sortedColumnIndex);
+            AssetInventory.SaveConfig();
+            CreateAssetTree();
+        }
+
+        private void OnVisibleAssetTreeColumnsChanged(MultiColumnHeader mch)
+        {
+            mch.ResizeToFit();
+
+            AssetInventory.Config.visiblePackageTreeColumns = mch.state.visibleColumns;
+            AssetInventory.SaveConfig();
         }
 
         private TreeViewWithTreeModel<AssetInfo> _assetTreeView;
@@ -972,7 +1000,7 @@ namespace AssetInventory
                     }
                     if (info.AssetSource != Asset.Source.RegistryPackage && info.AssetSource != Asset.Source.AssetManager)
                     {
-                        if (info.ParentId <= 0 && info.Downloaded)
+                        if (info.ParentId <= 0 && info.Downloaded && info.SafeName != Asset.NONE)
                         {
                             UIBlock("package.actions.delete", () =>
                             {
@@ -988,7 +1016,7 @@ namespace AssetInventory
                                 }
                             }, showDelete);
                         }
-                        if (info.ParentId > 0 || !info.Downloaded)
+                        else if (info.ParentId > 0 || !info.Downloaded || info.SafeName == Asset.NONE)
                         {
                             UIBlock("package.actions.delete", () =>
                             {
@@ -1321,9 +1349,9 @@ namespace AssetInventory
                 AssetMedia media = info.Media[i];
                 Texture2D texture = media.ThumbnailTexture != null ? media.ThumbnailTexture : media.Texture;
                 if (GUILayout.Button(
-                    UIStyles.Content(texture == null ? "Loading..." : string.Empty, texture),
-                    GUILayout.Width(AssetInventory.Config.mediaThumbnailWidth),
-                    GUILayout.Height(AssetInventory.Config.mediaThumbnailHeight + (i == _selectedMedia ? 10 : 0))))
+                        UIStyles.Content(texture == null ? "Loading..." : string.Empty, texture),
+                        GUILayout.Width(AssetInventory.Config.mediaThumbnailWidth),
+                        GUILayout.Height(AssetInventory.Config.mediaThumbnailHeight + (i == _selectedMedia ? 10 : 0))))
                 {
                     if (media.Type == "youtube")
                     {
@@ -1799,6 +1827,23 @@ namespace AssetInventory
                     _requireLookupUpdate = ChangeImpact.Write;
                     _requireSearchUpdate = true;
                     _requireAssetTreeRebuild = true;
+                }
+                GUILayout.EndHorizontal();
+            });
+
+            UIBlock("package.bulk.actions.aiusage", () =>
+            {
+                GUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField(UIStyles.Content("AI Captions", "Activate to create backups for this asset (done after every update cycle)."), EditorStyles.boldLabel, GUILayout.Width(labelWidth));
+                if (GUILayout.Button("All", GUILayout.ExpandWidth(false)))
+                {
+                    bulkAssets.ForEach(info => AssetInventory.SetAssetAIUse(info, true, false));
+                    AssetInventory.TriggerPackageRefresh();
+                }
+                if (GUILayout.Button("None", GUILayout.ExpandWidth(false)))
+                {
+                    bulkAssets.ForEach(info => AssetInventory.SetAssetAIUse(info, false, false));
+                    AssetInventory.TriggerPackageRefresh();
                 }
                 GUILayout.EndHorizontal();
             });
@@ -2474,83 +2519,137 @@ namespace AssetInventory
         private IOrderedEnumerable<AssetInfo> AddPackageOrdering(IEnumerable<AssetInfo> list)
         {
             IOrderedEnumerable<AssetInfo> result = null;
-            if (!AssetInventory.Config.sortAssetsDescending)
+            bool asc = !AssetInventory.Config.sortAssetsDescending;
+            switch (AssetInventory.Config.assetSorting)
             {
-                switch (AssetInventory.Config.assetSorting)
-                {
-                    case 0:
-                        result = list.OrderBy(a => a.GetDisplayName(), StringComparer.OrdinalIgnoreCase);
-                        break;
+                case (int)Columns.AICaptions:
+                    result = list.SortBy(a => a.AICaption, asc);
+                    break;
 
-                    case 1:
-                        result = list.OrderBy(a => a.PurchaseDate);
-                        break;
+                case (int)Columns.Backup:
+                    result = list.SortBy(a => a.Backup, asc);
+                    break;
 
-                    case 2:
-                        result = list.OrderBy(a => a.LastRelease);
-                        break;
+                case (int)Columns.Category:
+                    result = list.SortBy(a => a.GetDisplayCategory(), asc, StringComparer.OrdinalIgnoreCase);
+                    break;
 
-                    case 3:
-                        result = list.OrderBy(a => a.PackageSize);
-                        break;
+                case (int)Columns.InternalState:
+                    result = list.SortBy(a => a.CurrentState, asc);
+                    break;
 
-                    case 4:
-                        result = list.OrderBy(a => a.Location).ThenBy(a => a.GetDisplayName(), StringComparer.OrdinalIgnoreCase);
-                        break;
+                case (int)Columns.Deprecated:
+                    result = list.SortBy(a => a.IsDeprecated, asc);
+                    break;
 
-                    case 5:
-                        result = list.OrderBy(a => a.Hotness);
-                        break;
+                case (int)Columns.Downloaded:
+                    result = list.SortBy(a => a.Downloaded, asc);
+                    break;
 
-                    case 6:
-                        result = list.OrderBy(a => a.AssetRating).ThenBy(a => a.RatingCount);
-                        break;
+                case (int)Columns.Exclude:
+                    result = list.SortBy(a => a.Exclude, asc);
+                    break;
 
-                    case 7:
-                        result = list.OrderBy(a => a.RatingCount).ThenBy(a => a.AssetRating);
-                        break;
-                }
-            }
-            else
-            {
-                switch (AssetInventory.Config.assetSorting)
-                {
-                    case 0:
-                        result = list.OrderByDescending(a => a.GetDisplayName(), StringComparer.OrdinalIgnoreCase);
-                        break;
+                case (int)Columns.Extract:
+                    result = list.SortBy(a => a.KeepExtracted, asc);
+                    break;
 
-                    case 1:
-                        result = list.OrderByDescending(a => a.PurchaseDate);
-                        break;
+                case (int)Columns.Popularity:
+                    result = list.SortBy(a => a.Hotness, asc);
+                    break;
 
-                    case 2:
-                        result = list.OrderByDescending(a => a.LastRelease);
-                        break;
+                case (int)Columns.Indexed:
+                    result = list.SortBy(a => a.IsIndexed, asc);
+                    break;
 
-                    case 3:
-                        result = list.OrderByDescending(a => a.PackageSize);
-                        break;
+                case (int)Columns.FileCount:
+                    result = list.SortBy(a => a.FileCount, asc);
+                    break;
 
-                    case 4:
-                        result = list.OrderByDescending(a => a.Location).ThenByDescending(a => a.GetDisplayName(), StringComparer.OrdinalIgnoreCase);
-                        break;
+                case (int)Columns.License:
+                    result = list.SortBy(a => a.License, asc);
+                    break;
 
-                    case 5:
-                        result = list.OrderByDescending(a => a.Hotness);
-                        break;
+                case (int)Columns.Location:
+                    result = list.SortBy(a => a.Location, asc);
+                    break;
 
-                    case 6:
-                        result = list.OrderByDescending(a => a.AssetRating).ThenByDescending(a => a.RatingCount);
-                        break;
+                case (int)Columns.Materialized:
+                    result = list.SortBy(a => a.IsMaterialized, asc);
+                    break;
 
-                    case 7:
-                        result = list.OrderByDescending(a => a.RatingCount).ThenByDescending(a => a.AssetRating);
-                        break;
-                }
+                case (int)Columns.Name:
+                    result = list.SortBy(a => a.GetDisplayName(), asc, StringComparer.OrdinalIgnoreCase);
+                    break;
+
+                case (int)Columns.Outdated:
+                    result = list.SortBy(a => a.CurrentSubState == Asset.SubState.Outdated, asc);
+                    break;
+
+                case (int)Columns.Price:
+                    result = list.SortBy(a => a.GetPriceText(), asc);
+                    break;
+
+                case (int)Columns.Publisher:
+                    result = list.SortBy(a => a.GetDisplayPublisher(), asc, StringComparer.OrdinalIgnoreCase);
+                    break;
+
+                case (int)Columns.PurchaseDate:
+                    result = list.SortBy(a => a.PurchaseDate, asc);
+                    break;
+
+                case (int)Columns.Rating:
+                    result = list.SortBy(a => a.RatingCount, asc).ThenSortBy(a => a.AssetRating, asc);
+                    break;
+
+                case (int)Columns.RatingCount:
+                    result = list.SortBy(a => a.AssetRating, asc).ThenSortBy(a => a.RatingCount, asc);
+                    break;
+
+                case (int)Columns.ReleaseDate:
+                    result = list.SortBy(a => a.FirstRelease, asc);
+                    break;
+
+                case (int)Columns.Size:
+                    result = list.SortBy(a => a.PackageSize, asc);
+                    break;
+
+                case (int)Columns.Source:
+                    result = list.SortBy(a => a.AssetSource, asc);
+                    break;
+
+                case (int)Columns.State:
+                    result = list.SortBy(a => a.OfficialState, asc);
+                    break;
+
+                case (int)Columns.Tags:
+                    result = list.SortBy(a => string.Join(", ", a.PackageTags.Select(t => t.Name)), asc);
+                    break;
+
+                case (int)Columns.UnityVersions:
+                    result = list.SortBy(a => a.SupportedUnityVersions, asc);
+                    break;
+
+                case (int)Columns.Update:
+                    result = list.SortBy(a => a.IsUpdateAvailable(), asc);
+                    break;
+
+                case (int)Columns.UpdateDate:
+                    result = list.SortBy(a => a.LastRelease, asc);
+                    break;
+
+                case (int)Columns.Version:
+                    result = list.SortBy(a => new SemVer(a.GetVersion()), asc);
+                    break;
+
+                default:
+                    Debug.LogError($"Missing sorting support for column {AssetInventory.Config.assetSorting}");
+                    break;
+
             }
             if (result == null) result = list.OrderBy(a => a.LastRelease);
 
-            return result.ThenBy(a => a.GetDisplayName(), StringComparer.OrdinalIgnoreCase);
+            return result.ThenSortBy(a => a.GetDisplayName(), asc, StringComparer.OrdinalIgnoreCase);
         }
 
         private static string[] AddCategorizedItem(string[] cats, string[] lastCats, List<AssetInfo> data, AssetInfo info, ref int catIdx)

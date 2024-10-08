@@ -4,26 +4,7 @@ All notable changes to this package will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [2.6.0] - 2024-10-??
-- Close import window automatically if all imports succeeded
-- Show which media is selected in package view
-- Allow toggling between tabs and list view directly in package details view
-- New search filter "Image Type" to quickly find normal, metal, emission and other maps
-- Option to not calculate dependencies upon selection in search view (active by default for performance)
-- Ensure downloads are triggered from the main thread
-- Make FBX dependency scan configurable
-- Fix previews not being generated correctly when files already exist in project
-### Beta 4
-- Search assistant showing different ways to search
-- Gracefully handle issues when current build platform cannot be determined
-- Mark packages for reindexing when fixing missing audio length
-- Put packages to be extracted into a queue with progress monitor
-- Support exporting also meta files
-- Show also under Window/Asset Management
-- Use better method for asset deletion that should result in less internally incorrect state and artifacts
-- Fix preview generator not deleting temporarily cached assets anymore filling up disk
-- Fix folder wizard causing exception if some directories are not readable
-### Beta 3
+## [2.6.0] - 2024-10-14
 - Preview Wizard
   - Shows detailed breakdown of current preview state
   - Rework preview recreation flow to queue mode which can be started, stopped and continued at any point
@@ -34,40 +15,66 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   - Easy shortcut to open folder with preview images for current selection
   - Fix preview images disappearing in search when scheduled for recreation
   - Fix multiple cases of incorrect preview states when recreating previews encountered error situations
+- Support many additional columns in package view
+  - Allow sorting by pressing column headers
+  - Support many additional sorting options (by all possible columns)
+- Additional dependency detection
+  - Support shadergraph dependencies to referenced sub-graphs
+  - Detect referenced textures in FBX as dependencies
+  - Make FBX dependency scan configurable
+  - Show dependencies from Asset Store packages (where specified)
+  - Option to not calculate dependencies upon selection in search view (active by default for performance)
+- New search filter "Image Type" to quickly find normal, metal, emission and other maps
+- Exclude packages the user has hidden on the Asset Store automatically
+- Close import window automatically if all imports succeeded
+- Show which media is selected in package view
+- Allow toggling between tabs and list view directly in package details view
+- Ensure downloads are triggered from the main thread
+- Search assistant showing different ways to search with examples
+- Gracefully handle issues when current build platform cannot be determined
+- Mark packages for reindexing when fixing missing audio length
+- Put packages to be extracted into a queue with progress monitor
+- Support exporting also meta files
+- Show menu entry also under Window/Asset Management
 - New validator: Missing preview files
 - New validator: Wrong dimensions in preview files (compared to intended dimensions from Settings tab)
+- New validator: Check for database corruption
 - Focus searchfield again after adding field from dropdown
 - Allow excluding sub-packages in search view
+- Reuse existing editor login for Asset Manager connectivity
 - Show Asset Manager login information and login option
 - Show sub-packages correctly in Exclude maintenance view
 - Don't report items in temp folder as existing in project anymore
 - Improve audio detection and preview for files with incorrect extension (causing FMOD errors)
-- Handle issues more gracefully when copied paths are too long for the operating system
-- Fix upscaled preview images appearing very dark in newer versions of Unity
-- Fix additional folder wizard leaving trailing slash when selecting root folder under Windows, breaking subsequent usage
-### Older Betas
 - Show if a downloaded package is potentially incompatible to the current Unity version
 - Allow redownloading if there are compatible packages
-- Fix potentially wrong version of an asset being downloaded not appropriate for current Unity version
-- Reuse existing editor login for Asset Manager connectivity
 - New maintenance views: Incompatible Packages, Fixable (by redownloading) and Unfixable
-- Support shadergraph dependencies to referenced sub-graphs
-- Detect referenced textures in FBX as dependencies
+- Sub-packages inherit last update date from parent package
 - Ensure additional package data (file count, reindex all capability) is available for sub packages in search
+- AI
+  - Allow selecting which packages and content types to create AI captions for
+  - Switch AI GPU support to pull request 8
+  - Allow to bulk change AI captioning
+  - Show number of activated packages in AI settings
+  - New option to log newly created AI captions to the console
 - Upgrade SQLite to latest bug fix release
 - Auto-create new relative mappings for additional folders containing unknown keys (self-healing after DB reset)
-- New option to log newly created AI captions to the console
-- Allow selecting which packages and content types to create AI captions for
 - Remove "Installed" maintenance view that is superseded with "In current project" capability
-- Show dependencies from Asset Store packages
 - Clear package filters when navigating to other packages
-- Exclude packages the user has hidden on the Asset Store automatically
-- Sub-packages inherit last update date from parent package
 - Make ping after import configurable
 - Significantly reduce sluggishness of package view UI when doing an automatic meta-data refresh in the background after selecting packages
 - Show hints how to change the individual locations as tooltips in the Locations section
-- New validator: Check for database corruption
 - Ability to override journal mode for database for more conservative settings (dbJournalMode)
+- Handle issues more gracefully when copied paths are too long for the operating system
+- Support versions with commas instead of dots
+- Use better method for asset deletion that should result in less internally incorrect state and artifacts
+- Fix potentially wrong version of an asset being downloaded not appropriate for current Unity version
+- Fix indexed files from archives being stored with absolute paths making it impossible to use from other systems
+- Fix previews not being generated correctly when files already exist in project
+- Fix preview generator not deleting temporarily cached assets anymore filling up disk
+- Fix folder wizard causing exception if some directories are not readable
+- Fix upscaled preview images appearing very dark in newer versions of Unity
+- Fix additional folder wizard leaving trailing slash when selecting root folder under Windows, breaking subsequent usage
 - Fix media folders and archives not honoring request to fix missing sub-packages
 - Fix endless import loop when interactively importing complex assets like Corgi that bring package dependencies and act as a full project
 - Fix "Reindex Now" option missing for packages

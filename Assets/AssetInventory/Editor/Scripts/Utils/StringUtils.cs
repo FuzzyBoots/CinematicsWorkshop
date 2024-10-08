@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+using UnityEngine;
 
 namespace AssetInventory
 {
@@ -115,6 +116,11 @@ namespace AssetInventory
             return shortHash.ToString($"D{length}");
         }
 
+        public static bool IsUrl(string url)
+        {
+            return Uri.IsWellFormedUriString(url, UriKind.Absolute);
+        }
+
         public static bool IsUnicode(this string input)
         {
             return input.ToCharArray().Any(c => c > 255);
@@ -128,6 +134,28 @@ namespace AssetInventory
         public static string StripUnicode(string input)
         {
             return Regex.Replace(input, "&#.*?;", string.Empty);
+        }
+
+        public static string RemoveTrailing(this string source, string text)
+        {
+            if (source == null)
+            {
+                Debug.LogError("This should not happen, source is null");
+                return null;
+            }
+
+            while (source.EndsWith(text)) source = source.Substring(0, source.Length - text.Length);
+            return source;
+        }
+
+        public static string ToLowercaseFirstLetter(this string input)
+        {
+            if (string.IsNullOrEmpty(input) || char.IsLower(input[0]))
+            {
+                return input;
+            }
+
+            return char.ToLower(input[0]) + input.Substring(1);
         }
 
         public static string ToLabel(string input)
@@ -157,24 +185,6 @@ namespace AssetInventory
             result = Regex.Replace(result, @"\n{3,}", "\n\n");
 
             return result.Trim();
-        }
-
-        public static string ToLowercaseFirstLetter(this string input)
-        {
-            if (string.IsNullOrEmpty(input) || char.IsLower(input[0]))
-            {
-                return input;
-            }
-
-            return char.ToLower(input[0]) + input.Substring(1);
-        }
-
-        public static void Populate<T>(this T[] arr, T value)
-        {
-            for (int i = 0; i < arr.Length; i++)
-            {
-                arr[i] = value;
-            }
         }
 
         public static string GetEnvVar(string key)

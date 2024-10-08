@@ -193,7 +193,7 @@ namespace AssetInventory
                     DBAdapter.DB.Execute("delete from AssetFile where AssetId=?", asset.Id);
 
                     importSpec.location = asset.GetLocation(true);
-                    await new MediaImporter().Index(importSpec, asset, true, true);
+                    await new MediaImporter().Index(importSpec, asset, false, true);
                 }
                 if (CancellationRequested) break;
 
